@@ -52,6 +52,9 @@ final class FileRouter implements MiddlewareInterface
             return $handler->handle($request);
         }
         $action = $this->parseAction($request);
+        if ($action === null) {
+            return $handler->handle($request);
+        }
 
         if (!method_exists($controllerClass, $action)) {
             return $handler->handle($request);
