@@ -79,7 +79,7 @@ final class FileRouter implements MiddlewareInterface
         };
     }
 
-    private function parseController(ServerRequestInterface $request): mixed
+    private function parseController(ServerRequestInterface $request): ?string
     {
         $path = $request->getUri()->getPath();
         if ($path === '/') {
@@ -91,8 +91,12 @@ final class FileRouter implements MiddlewareInterface
                 fn(array $matches) => strtoupper($matches[1]),
                 $path,
             );
-            $directoryPath = dirname($controllerName);
-            $controllerName = basename($controllerName);
+
+            if (!preg_match('#^(.*?)/([^/]*)/?$#', $controllerName, $matches)) {
+                return null;
+            }
+            $directoryPath = $matches[1];
+            $controllerName = $matches[2];
         }
 
         $controller = $controllerName . $this->classPostfix;

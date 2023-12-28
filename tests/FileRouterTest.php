@@ -42,6 +42,27 @@ final class FileRouterTest extends TestCase
         $this->assertEquals('x-header-value', $response->getHeaderLine('X-Header-Name'));
     }
 
+    public function testTrailingSlash(): void
+    {
+        /**
+         * @var FileRouter $router
+         */
+        $router = $this->createRouter();
+        $router = $router
+            ->withNamespace('Yiisoft\FileRouter\Tests\Support\App1');
+
+        $handler = $this->createExceptionHandler();
+        $request = new ServerRequest(
+            method: 'GET',
+            uri: '/user/',
+        );
+
+        $response = $router->process($request, $handler);
+
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals('Hello, index!', (string) $response->getBody());
+    }
+
     #[DataProvider('dataRouter')]
     public function testRouter(string $method, string $uri, string $expectedResponse): void
     {
