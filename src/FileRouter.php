@@ -87,7 +87,7 @@ final class FileRouter implements MiddlewareInterface
             $controllerName = preg_replace_callback(
                 '#(/.)#',
                 fn(array $matches) => strtoupper($matches[1]),
-                str_replace('/', DIRECTORY_SEPARATOR, $path)
+                $path,
             );
             $directoryPath = StringHelper::directoryName($controllerName);
 
