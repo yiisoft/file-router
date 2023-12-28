@@ -51,7 +51,16 @@ final class FileRouter implements MiddlewareInterface
         if ($controllerClass === null) {
             return $handler->handle($request);
         }
-        $action = $this->parseAction($request);
+        $actions = $controllerClass::$actions ?? [
+            'HEAD' => 'head',
+            'OPTIONS' => 'options',
+            'GET' => 'index',
+            'POST' => 'create',
+            'PUT' => 'update',
+            'DELETE' => 'delete',
+        ];
+        $action = $actions[$request->getMethod()] ?? null;
+
         if ($action === null) {
             return $handler->handle($request);
         }
@@ -68,17 +77,6 @@ final class FileRouter implements MiddlewareInterface
         return $middlewareDispatcher->dispatch($request, $handler);
     }
 
-    private function parseAction(ServerRequestInterface $request): ?string
-    {
-        return match ($request->getMethod()) {
-            'HEAD', 'GET' => 'index',
-            'POST' => 'create',
-            'PUT' => 'update',
-            'DELETE' => 'delete',
-            default => throw new \Exception('Not implemented.'),
-        };
-    }
-
     private function parseController(ServerRequestInterface $request): ?string
     {
         $path = $request->getUri()->getPath();
@@ -92,7 +90,7 @@ final class FileRouter implements MiddlewareInterface
                 $path,
             );
 
-            if (!preg_match('#^(.*?)/([^/]*)/?$#', $controllerName, $matches)) {
+            if (!preg_match('#^(.*?)/([^/]+)/?$#', $controllerName, $matches)) {
                 return null;
             }
             $directoryPath = $matches[1];

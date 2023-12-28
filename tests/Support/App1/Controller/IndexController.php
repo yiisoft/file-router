@@ -9,6 +9,10 @@ use Psr\Http\Message\ResponseInterface;
 
 class IndexController
 {
+    public static array $actions = [
+        'GET' => 'index',
+        'DELETE' => 'delete',
+    ];
     public function index(): ResponseInterface
     {
         return new TextResponse('Hello, index!', 200, ['X-Header-Name' => 'X-Header-Value']);

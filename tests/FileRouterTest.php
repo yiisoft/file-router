@@ -117,8 +117,59 @@ final class FileRouterTest extends TestCase
 
         $handler = $this->createExceptionHandler();
         $request = new ServerRequest(
+            method: 'HEAD',
+            uri: '/',
+        );
+
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('Not implemented from tests.');
+        $router->process($request, $handler);
+    }
+
+    public function testNotImplementedAction(): void
+    {
+        $router = $this->createRouter();
+        $router = $router
+            ->withNamespace('Yiisoft\FileRouter\Tests\Support\App1');
+
+        $handler = $this->createExceptionHandler();
+        $request = new ServerRequest(
             method: 'DELETE',
             uri: '/',
+        );
+
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('Not implemented from tests.');
+        $router->process($request, $handler);
+    }
+
+    public function testUnknownController(): void
+    {
+        $router = $this->createRouter();
+        $router = $router
+            ->withNamespace('Yiisoft\FileRouter\Tests\Support\App1');
+
+        $handler = $this->createExceptionHandler();
+        $request = new ServerRequest(
+            method: 'DELETE',
+            uri: '/test/123',
+        );
+
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('Not implemented from tests.');
+        $router->process($request, $handler);
+    }
+
+    public function testIncorrectUrl(): void
+    {
+        $router = $this->createRouter();
+        $router = $router
+            ->withNamespace('Yiisoft\FileRouter\Tests\Support\App1');
+
+        $handler = $this->createExceptionHandler();
+        $request = new ServerRequest(
+            method: 'DELETE',
+            uri: '/test//123///',
         );
 
         $this->expectException(\Exception::class);
