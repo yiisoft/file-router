@@ -9,7 +9,6 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Yiisoft\Middleware\Dispatcher\MiddlewareDispatcher;
-use Yiisoft\Strings\StringHelper;
 
 final class FileRouter implements MiddlewareInterface
 {
@@ -89,15 +88,15 @@ final class FileRouter implements MiddlewareInterface
                 fn(array $matches) => strtoupper($matches[1]),
                 $path,
             );
-            $directoryPath = StringHelper::directoryName($controllerName);
-
-            $controllerName = StringHelper::basename($controllerName);
+            $directoryPath = dirname($controllerName);
+            $controllerName = basename($controllerName);
         }
 
         $controller = $controllerName . $this->classPostfix;
+
         $className = str_replace(
-            ['/', '\\\\'],
-            ['\\', '\\'],
+            ['\\/\\', '\\/', '\\\\'],
+            '\\',
             $this->namespace . '\\' . $this->baseControllerDirectory . '\\' . $directoryPath . '\\' . $controller
         );
 
