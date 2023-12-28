@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Yiisoft\FileRouter;
 
-use PHPUnit\Logging\Exception;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -69,14 +68,13 @@ final class FileRouter implements MiddlewareInterface
 
     private function parseAction(ServerRequestInterface $request): ?string
     {
-        $action = match ($request->getMethod()) {
+        return match ($request->getMethod()) {
             'HEAD', 'GET' => 'index',
             'POST' => 'create',
             'PUT' => 'update',
             'DELETE' => 'delete',
-            default => throw new Exception('Not implemented.'),
+            default => throw new \Exception('Not implemented.'),
         };
-        return $action;
     }
 
     private function parseController(ServerRequestInterface $request): mixed
@@ -106,20 +104,6 @@ final class FileRouter implements MiddlewareInterface
         if (class_exists($className)) {
             return $className;
         }
-
-        // alternative version finding namespace by file
-
-
-        //$controllerDirectory = $this->aliases->get('src') . DIRECTORY_SEPARATOR . $this->baseControllerDirectory;
-        //$classPath = $controllerDirectory . DIRECTORY_SEPARATOR . $directoryPath . DIRECTORY_SEPARATOR . $controller;
-        //$filename = $classPath . '.php';
-        //if (file_exists($filename)) {
-        //    $content = file_get_contents($filename);
-        //    $namespace = preg_match('#namespace\s+(.+?);#', $content, $matches) ? $matches[1] : '';
-        //    if (class_exists($namespace . '\\' . $controller)) {
-        //        return $namespace . '\\' . $controller;
-        //    }
-        //}
 
         return null;
     }
