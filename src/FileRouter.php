@@ -69,23 +69,13 @@ final class FileRouter implements MiddlewareInterface
 
     private function parseAction(ServerRequestInterface $request): ?string
     {
-        switch ($request->getMethod()) {
-            case 'HEAD':
-            case 'GET':
-                $action = 'index';
-                break;
-            case 'POST':
-                $action = 'create';
-                break;
-            case 'PUT':
-                $action = 'update';
-                break;
-            case 'DELETE':
-                $action = 'delete';
-                break;
-            default:
-                throw new Exception('Not implemented.');
-        }
+        $action = match ($request->getMethod()) {
+            'HEAD', 'GET' => 'index',
+            'POST' => 'create',
+            'PUT' => 'update',
+            'DELETE' => 'delete',
+            default => throw new Exception('Not implemented.'),
+        };
         return $action;
     }
 
