@@ -26,7 +26,7 @@ The package ...
 The package could be installed with composer:
 
 ```shell
-composer require yiisoft/File Router
+composer require yiisoft/file-router
 ```
 
 ## General usage
