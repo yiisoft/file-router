@@ -47,10 +47,14 @@ final class FileRouter implements MiddlewareInterface
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
+        /**
+         * @psalm-var class-string|null $controllerClass
+         */
         $controllerClass = $this->parseController($request);
         if ($controllerClass === null) {
             return $handler->handle($request);
         }
+        /** @psalm-suppress InvalidPropertyFetch */
         $actions = $controllerClass::$actions ?? [
             'HEAD' => 'head',
             'OPTIONS' => 'options',
@@ -69,6 +73,7 @@ final class FileRouter implements MiddlewareInterface
             return $handler->handle($request);
         }
 
+        /** @psalm-suppress InvalidPropertyFetch */
         $middlewares = $controllerClass::$middlewares[$action] ?? [];
         $middlewares[] = [$controllerClass, $action];
 
