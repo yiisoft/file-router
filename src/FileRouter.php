@@ -9,7 +9,6 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Yiisoft\Middleware\Dispatcher\MiddlewareDispatcher;
-use Yiisoft\Strings\StringHelper;
 
 final class FileRouter implements MiddlewareInterface
 {
@@ -48,16 +47,33 @@ final class FileRouter implements MiddlewareInterface
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
+        /**
+         * @psalm-var class-string|null $controllerClass
+         */
         $controllerClass = $this->parseController($request);
         if ($controllerClass === null) {
             return $handler->handle($request);
         }
-        $action = $this->parseAction($request);
+        /** @psalm-suppress InvalidPropertyFetch */
+        $actions = $controllerClass::$actions ?? [
+            'HEAD' => 'head',
+            'OPTIONS' => 'options',
+            'GET' => 'index',
+            'POST' => 'create',
+            'PUT' => 'update',
+            'DELETE' => 'delete',
+        ];
+        $action = $actions[$request->getMethod()] ?? null;
+
+        if ($action === null) {
+            return $handler->handle($request);
+        }
 
         if (!method_exists($controllerClass, $action)) {
             return $handler->handle($request);
         }
 
+        /** @psalm-suppress InvalidPropertyFetch */
         $middlewares = $controllerClass::$middlewares[$action] ?? [];
         $middlewares[] = [$controllerClass, $action];
 
@@ -66,18 +82,7 @@ final class FileRouter implements MiddlewareInterface
         return $middlewareDispatcher->dispatch($request, $handler);
     }
 
-    private function parseAction(ServerRequestInterface $request): ?string
-    {
-        return match ($request->getMethod()) {
-            'HEAD', 'GET' => 'index',
-            'POST' => 'create',
-            'PUT' => 'update',
-            'DELETE' => 'delete',
-            default => throw new \Exception('Not implemented.'),
-        };
-    }
-
-    private function parseController(ServerRequestInterface $request): mixed
+    private function parseController(ServerRequestInterface $request): ?string
     {
         $path = $request->getUri()->getPath();
         if ($path === '/') {
@@ -89,15 +94,19 @@ final class FileRouter implements MiddlewareInterface
                 fn(array $matches) => strtoupper($matches[1]),
                 $path,
             );
-            $directoryPath = StringHelper::directoryName($controllerName);
 
-            $controllerName = StringHelper::basename($controllerName);
+            if (!preg_match('#^(.*?)/([^/]+)/?$#', $controllerName, $matches)) {
+                return null;
+            }
+            $directoryPath = $matches[1];
+            $controllerName = $matches[2];
         }
 
         $controller = $controllerName . $this->classPostfix;
+
         $className = str_replace(
-            ['/', '\\\\'],
-            ['\\', '\\'],
+            ['\\/\\', '\\/', '\\\\'],
+            '\\',
             $this->namespace . '\\' . $this->baseControllerDirectory . '\\' . $directoryPath . '\\' . $controller
         );
 
