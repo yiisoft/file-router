@@ -18,6 +18,11 @@ class UserAction
 
     public function index(): ResponseInterface
     {
-        return new TextResponse('Hello, user action!');
+        return new TextResponse('Hello, user/index action!');
+    }
+
+    public function hello(): ResponseInterface
+    {
+        return new TextResponse('Hello, user/hello action!');
     }
 }

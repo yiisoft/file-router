@@ -47,73 +47,110 @@ final class FileRouter implements MiddlewareInterface
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        /**
-         * @psalm-var class-string|null $controllerClass
-         */
-        $controllerClass = $this->parseController($request);
-        if ($controllerClass === null) {
-            return $handler->handle($request);
+        $possibleEntrypoints = $this->parseRequestPath($request);
+
+        foreach ($possibleEntrypoints as $possibleEntrypoint) {
+            if (empty($possibleEntrypoint)) {
+                continue;
+            }
+
+            /**
+             * @psalm-var class-string|null $controllerClass
+             */
+            [$controllerClass, $possibleAction] = $possibleEntrypoint;
+            if (!class_exists($controllerClass)) {
+                continue;
+            }
+
+            /** @psalm-suppress InvalidPropertyFetch */
+            $actions = $controllerClass::$actions ?? [
+                'HEAD' => 'head',
+                'OPTIONS' => 'options',
+                'GET' => 'index',
+                'POST' => 'create',
+                'PUT' => 'update',
+                'DELETE' => 'delete',
+            ];
+            $action = $possibleAction ?? $actions[$request->getMethod()] ?? null;
+
+            if ($action === null) {
+                continue;
+            }
+
+            if (!method_exists($controllerClass, $action)) {
+                continue;
+            }
+
+            /** @psalm-suppress InvalidPropertyFetch */
+            $middlewares = $controllerClass::$middlewares[$action] ?? [];
+            $middlewares[] = [$controllerClass, $action];
+
+            $middlewareDispatcher = $this->middlewareDispatcher->withMiddlewares($middlewares);
+
+            return $middlewareDispatcher->dispatch($request, $handler);
         }
-        /** @psalm-suppress InvalidPropertyFetch */
-        $actions = $controllerClass::$actions ?? [
-            'HEAD' => 'head',
-            'OPTIONS' => 'options',
-            'GET' => 'index',
-            'POST' => 'create',
-            'PUT' => 'update',
-            'DELETE' => 'delete',
-        ];
-        $action = $actions[$request->getMethod()] ?? null;
 
-        if ($action === null) {
-            return $handler->handle($request);
-        }
-
-        if (!method_exists($controllerClass, $action)) {
-            return $handler->handle($request);
-        }
-
-        /** @psalm-suppress InvalidPropertyFetch */
-        $middlewares = $controllerClass::$middlewares[$action] ?? [];
-        $middlewares[] = [$controllerClass, $action];
-
-        $middlewareDispatcher = $this->middlewareDispatcher->withMiddlewares($middlewares);
-
-        return $middlewareDispatcher->dispatch($request, $handler);
+        return $handler->handle($request);
     }
 
-    private function parseController(ServerRequestInterface $request): ?string
+    private function parseRequestPath(ServerRequestInterface $request): iterable
     {
+        $possibleAction = null;
         $path = $request->getUri()->getPath();
         if ($path === '/') {
             $controllerName = 'Index';
-            $directoryPath = '';
-        } else {
-            $controllerName = preg_replace_callback(
-                '#(/.)#',
-                fn(array $matches) => strtoupper($matches[1]),
-                $path,
-            );
 
-            if (!preg_match('#^(.*?)/([^/]+)/?$#', $controllerName, $matches)) {
-                return null;
-            }
-            $directoryPath = $matches[1];
-            $controllerName = $matches[2];
+            yield [
+                $this->cleanClassname(
+                    $this->namespace . '\\' . $this->baseControllerDirectory . '\\' . $controllerName . $this->classPostfix
+                ),
+                $possibleAction,
+            ];
+            return;
         }
 
-        $controller = $controllerName . $this->classPostfix;
-
-        $className = str_replace(
-            ['\\/\\', '\\/', '\\\\'],
-            '\\',
-            $this->namespace . '\\' . $this->baseControllerDirectory . '\\' . $directoryPath . '\\' . $controller
+        $controllerName = preg_replace_callback(
+            '#(/.)#',
+            fn(array $matches) => strtoupper($matches[1]),
+            $path,
         );
 
-        if (class_exists($className)) {
-            return $className;
+        if (!preg_match('#^(.*?)/([^/]+)/?$#', $controllerName, $matches)) {
+            return;
         }
 
-        return null;
+        $directoryPath = $matches[1];
+        $controllerName = $matches[2];
+
+        yield [
+            $this->cleanClassname(
+                $this->namespace . '\\' . $this->baseControllerDirectory . '\\' . $directoryPath . '\\' . $controllerName . $this->classPostfix
+            ),
+            $possibleAction,
+        ];
+
+        if (!preg_match('#^(.*?)/([^/]+)/?$#', $directoryPath, $matches)) {
+            return;
+        }
+
+        $possibleAction = $controllerName;
+        $directoryPath = $matches[1];
+        $controllerName = $matches[2];
+
+        yield [
+            $this->cleanClassname(
+                $this->namespace . '\\' . $this->baseControllerDirectory . '\\' . $directoryPath . '\\' . $controllerName . $this->classPostfix
+            ),
+            strtolower($possibleAction),
+        ];
+    }
+
+    protected function cleanClassname(string $className): string|array
+    {
+        return str_replace(
+            ['\\/\\', '\\/', '\\\\'],
+            '\\',
+            $className,
+        );
     }
 }
