@@ -130,19 +130,20 @@ final class FileRouter implements MiddlewareInterface
             $possibleAction,
         ];
 
-        if (!preg_match('#^(.*?)/([^/]+)/?$#', $directoryPath, $matches)) {
-            return;
+        if (preg_match('#^(.*?)/([^/]+)/?$#', $directoryPath, $matches)) {
+            $possibleAction = strtolower($controllerName);
+            $directoryPath = $matches[1];
+            $controllerName = $matches[2];
+        } else {
+            $directoryPath = $controllerName;
+            $controllerName = 'Index';
         }
-
-        $possibleAction = $controllerName;
-        $directoryPath = $matches[1];
-        $controllerName = $matches[2];
 
         yield [
             $this->cleanClassname(
                 $this->namespace . '\\' . $this->baseControllerDirectory . '\\' . $directoryPath . '\\' . $controllerName . $this->classPostfix
             ),
-            strtolower($possibleAction),
+            $possibleAction,
         ];
     }
 

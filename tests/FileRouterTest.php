@@ -234,21 +234,37 @@ final class FileRouterTest extends TestCase
         $this->assertEquals('Hello, user/hello action!', (string) $response->getBody());
     }
 
-    public function testRoutesCollision(): void
+    #[DataProvider('dataRoutesCollision')]
+    public function testRoutesCollision(string $method, string $uri, string $expectedResponse): void
     {
         $router = $this->createRouter();
         $router = $router->withNamespace('Yiisoft\FileRouter\Tests\Support\App3');
 
         $handler = $this->createExceptionHandler();
         $request = new ServerRequest(
-            method: 'GET',
-            uri: '/user',
+            method: $method,
+            uri: $uri,
         );
 
         $response = $router->process($request, $handler);
 
         $this->assertEquals(200, $response->getStatusCode());
-        $this->assertEquals('Hello, Controller/UserController!', (string) $response->getBody());
+        $this->assertEquals($expectedResponse, (string) $response->getBody());
+    }
+
+    public static function dataRoutesCollision(): iterable
+    {
+        yield 'direct' => [
+            'GET',
+            '/user',
+            'Hello, Controller/UserController!',
+        ];
+
+        yield 'indirect' => [
+            'POST',
+            '/user',
+            'Hello, Controller/User/IndexController!',
+        ];
     }
 
     private function createRouter(): FileRouter

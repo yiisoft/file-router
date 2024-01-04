@@ -13,4 +13,9 @@ class IndexController
     {
         return new TextResponse('Hello, Controller/User/IndexController!');
     }
+
+    public function create(): ResponseInterface
+    {
+        return new TextResponse('Hello, Controller/User/IndexController!');
+    }
 }
