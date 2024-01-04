@@ -50,10 +50,6 @@ final class FileRouter implements MiddlewareInterface
         $possibleEntrypoints = $this->parseRequestPath($request);
 
         foreach ($possibleEntrypoints as $possibleEntrypoint) {
-            if (empty($possibleEntrypoint)) {
-                continue;
-            }
-
             /**
              * @psalm-var class-string $controllerClass
              * @psalm-var string|null $possibleAction
