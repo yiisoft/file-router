@@ -11,10 +11,9 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Yiisoft\FileRouter\FileRouter;
-use Yiisoft\FileRouter\Tests\Support\App1\Controller\IndexController;
-use Yiisoft\FileRouter\Tests\Support\App1\Controller\User\BlogController;
-use Yiisoft\FileRouter\Tests\Support\App1\Controller\UserController;
-use Yiisoft\FileRouter\Tests\Support\App2\Action\UserAction;
+use Yiisoft\FileRouter\Tests\Support\App1;
+use Yiisoft\FileRouter\Tests\Support\App2;
+use Yiisoft\FileRouter\Tests\Support\App3;
 use Yiisoft\FileRouter\Tests\Support\HeaderMiddleware;
 use Yiisoft\Middleware\Dispatcher\MiddlewareDispatcher;
 use Yiisoft\Middleware\Dispatcher\MiddlewareFactory;
@@ -215,14 +214,36 @@ final class FileRouterTest extends TestCase
         $this->assertEquals('Hello, user action!', (string) $response->getBody());
     }
 
+    public function testRoutesCollision(): void
+    {
+        $router = $this->createRouter();
+        $router = $router->withNamespace('Yiisoft\FileRouter\Tests\Support\App3');
+
+        $handler = $this->createExceptionHandler();
+        $request = new ServerRequest(
+            method: 'GET',
+            uri: '/user',
+        );
+
+        $response = $router->process($request, $handler);
+
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals('Hello, Controller/UserController!', (string) $response->getBody());
+    }
+
     private function createRouter(): FileRouter
     {
         $container = new SimpleContainer([
             HeaderMiddleware::class => new HeaderMiddleware(),
-            BlogController::class => new BlogController(),
-            UserController::class => new UserController(),
-            IndexController::class => new IndexController(),
-            UserAction::class => new UserAction(),
+
+            App1\Controller\User\BlogController::class => new App1\Controller\User\BlogController(),
+            App1\Controller\UserController::class => new App1\Controller\UserController(),
+            App1\Controller\IndexController::class => new App1\Controller\IndexController(),
+
+            App2\Action\UserAction::class => new App2\Action\UserAction(),
+
+            App3\Controller\UserController::class => new App3\Controller\UserController(),
+            App3\Controller\User\IndexController::class => new App3\Controller\User\IndexController(),
         ]);
 
         return new FileRouter(
