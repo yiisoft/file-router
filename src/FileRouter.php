@@ -55,7 +55,8 @@ final class FileRouter implements MiddlewareInterface
             }
 
             /**
-             * @psalm-var class-string|null $controllerClass
+             * @psalm-var class-string $controllerClass
+             * @psalm-var string|null $possibleAction
              */
             [$controllerClass, $possibleAction] = $possibleEntrypoint;
             if (!class_exists($controllerClass)) {
