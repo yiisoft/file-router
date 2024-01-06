@@ -33,6 +33,7 @@
     "prefer-stable": true,
     "require": {
         "php": "^8.1",
+        "ext-mbstring": "*",
         "psr/http-message": "^1.0|^2.0",
         "psr/http-server-handler": "^1.0",
         "psr/http-server-middleware": "^1.0",
