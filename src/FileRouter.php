@@ -107,7 +107,7 @@ final class FileRouter implements MiddlewareInterface
 
         $controllerName = preg_replace_callback(
             '#(/.)#u',
-            fn(array $matches) => mb_strtoupper($matches[1]),
+            static fn(array $matches) => mb_strtoupper($matches[1]),
             $path,
         );
 
@@ -142,7 +142,7 @@ final class FileRouter implements MiddlewareInterface
         ];
     }
 
-    protected function cleanClassname(string $className): string|array
+    private function cleanClassname(string $className): string
     {
         return str_replace(
             ['\\/\\', '\\/', '\\\\'],
