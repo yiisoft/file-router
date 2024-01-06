@@ -215,6 +215,27 @@ final class FileRouterTest extends TestCase
         $this->assertEquals('Hello, user/index action!', (string) $response->getBody());
     }
 
+    public function testDefaultControllerName(): void
+    {
+        $router = $this->createRouter();
+        $router = $router
+            ->withNamespace('Yiisoft\FileRouter\Tests\Support\App2')
+            ->withBaseControllerDirectory('Action')
+            ->withClassPostfix('Action')
+            ->withDefaultControllerName('User');
+
+        $handler = $this->createExceptionHandler();
+        $request = new ServerRequest(
+            method: 'GET',
+            uri: '/',
+        );
+
+        $response = $router->process($request, $handler);
+
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals('Hello, user/index action!', (string) $response->getBody());
+    }
+
     public function testCustomRoute(): void
     {
         $router = $this->createRouter();

@@ -12,9 +12,10 @@ use Yiisoft\Middleware\Dispatcher\MiddlewareDispatcher;
 
 final class FileRouter implements MiddlewareInterface
 {
-    public string $baseControllerDirectory = 'Controller';
-    public string $classPostfix = 'Controller';
-    public string $namespace = 'App';
+    private string $baseControllerDirectory = 'Controller';
+    private string $classPostfix = 'Controller';
+    private string $namespace = 'App';
+    private string $defaultControllerName = 'Index';
 
     public function __construct(
         private readonly MiddlewareDispatcher $middlewareDispatcher,
@@ -41,6 +42,14 @@ final class FileRouter implements MiddlewareInterface
     {
         $new = clone $this;
         $new->namespace = $namespace;
+
+        return $new;
+    }
+
+    public function withDefaultControllerName(string $name): self
+    {
+        $new = clone $this;
+        $new->defaultControllerName = $name;
 
         return $new;
     }
@@ -94,11 +103,9 @@ final class FileRouter implements MiddlewareInterface
         $possibleAction = null;
         $path = urldecode($request->getUri()->getPath());
         if ($path === '/') {
-            $controllerName = 'Index';
-
             yield [
                 $this->cleanClassname(
-                    $this->namespace . '\\' . $this->baseControllerDirectory . '\\' . $controllerName . $this->classPostfix
+                    $this->namespace . '\\' . $this->baseControllerDirectory . '\\' . $this->defaultControllerName . $this->classPostfix
                 ),
                 $possibleAction,
             ];
@@ -131,7 +138,7 @@ final class FileRouter implements MiddlewareInterface
             $controllerName = $matches[2];
         } else {
             $directoryPath = $controllerName;
-            $controllerName = 'Index';
+            $controllerName = $this->defaultControllerName;
         }
 
         yield [
