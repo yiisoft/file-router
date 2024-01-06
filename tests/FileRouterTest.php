@@ -11,10 +11,9 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Yiisoft\FileRouter\FileRouter;
-use Yiisoft\FileRouter\Tests\Support\App1\Controller\IndexController;
-use Yiisoft\FileRouter\Tests\Support\App1\Controller\User\BlogController;
-use Yiisoft\FileRouter\Tests\Support\App1\Controller\UserController;
-use Yiisoft\FileRouter\Tests\Support\App2\Action\UserAction;
+use Yiisoft\FileRouter\Tests\Support\App1;
+use Yiisoft\FileRouter\Tests\Support\App2;
+use Yiisoft\FileRouter\Tests\Support\App3;
 use Yiisoft\FileRouter\Tests\Support\HeaderMiddleware;
 use Yiisoft\Middleware\Dispatcher\MiddlewareDispatcher;
 use Yiisoft\Middleware\Dispatcher\MiddlewareFactory;
@@ -212,17 +211,75 @@ final class FileRouterTest extends TestCase
         $response = $router->process($request, $handler);
 
         $this->assertEquals(200, $response->getStatusCode());
-        $this->assertEquals('Hello, user action!', (string) $response->getBody());
+        $this->assertEquals('Hello, user/index action!', (string) $response->getBody());
+    }
+
+    public function testCustomRoute(): void
+    {
+        $router = $this->createRouter();
+        $router = $router
+            ->withNamespace('Yiisoft\FileRouter\Tests\Support\App2')
+            ->withBaseControllerDirectory('Action')
+            ->withClassPostfix('Action');
+
+        $handler = $this->createExceptionHandler();
+        $request = new ServerRequest(
+            method: 'GET',
+            uri: '/user/hello',
+        );
+
+        $response = $router->process($request, $handler);
+
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals('Hello, user/hello action!', (string) $response->getBody());
+    }
+
+    #[DataProvider('dataRoutesCollision')]
+    public function testRoutesCollision(string $method, string $uri, string $expectedResponse): void
+    {
+        $router = $this->createRouter();
+        $router = $router->withNamespace('Yiisoft\FileRouter\Tests\Support\App3');
+
+        $handler = $this->createExceptionHandler();
+        $request = new ServerRequest(
+            method: $method,
+            uri: $uri,
+        );
+
+        $response = $router->process($request, $handler);
+
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals($expectedResponse, (string) $response->getBody());
+    }
+
+    public static function dataRoutesCollision(): iterable
+    {
+        yield 'direct' => [
+            'GET',
+            '/user',
+            'Hello, Controller/UserController!',
+        ];
+
+        yield 'indirect' => [
+            'POST',
+            '/user',
+            'Hello, Controller/User/IndexController!',
+        ];
     }
 
     private function createRouter(): FileRouter
     {
         $container = new SimpleContainer([
             HeaderMiddleware::class => new HeaderMiddleware(),
-            BlogController::class => new BlogController(),
-            UserController::class => new UserController(),
-            IndexController::class => new IndexController(),
-            UserAction::class => new UserAction(),
+
+            App1\Controller\User\BlogController::class => new App1\Controller\User\BlogController(),
+            App1\Controller\UserController::class => new App1\Controller\UserController(),
+            App1\Controller\IndexController::class => new App1\Controller\IndexController(),
+
+            App2\Action\UserAction::class => new App2\Action\UserAction(),
+
+            App3\Controller\UserController::class => new App3\Controller\UserController(),
+            App3\Controller\User\IndexController::class => new App3\Controller\User\IndexController(),
         ]);
 
         return new FileRouter(
