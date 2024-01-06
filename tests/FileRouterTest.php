@@ -14,6 +14,7 @@ use Yiisoft\FileRouter\FileRouter;
 use Yiisoft\FileRouter\Tests\Support\App1;
 use Yiisoft\FileRouter\Tests\Support\App2;
 use Yiisoft\FileRouter\Tests\Support\App3;
+use Yiisoft\FileRouter\Tests\Support\App4;
 use Yiisoft\FileRouter\Tests\Support\HeaderMiddleware;
 use Yiisoft\Middleware\Dispatcher\MiddlewareDispatcher;
 use Yiisoft\Middleware\Dispatcher\MiddlewareFactory;
@@ -267,6 +268,36 @@ final class FileRouterTest extends TestCase
         ];
     }
 
+    #[DataProvider('dataUnicodeRoutes')]
+    public function testTestUnicodeRoutes(string $method, string $uri, string $expectedResponse): void
+    {
+        $router = $this->createRouter();
+        $router = $router
+            ->withNamespace('Yiisoft\FileRouter\Tests\Support\App4')
+            ->withClassPostfix('Контроллер')
+            ->withBaseControllerDirectory('Контроллеры');
+
+        $handler = $this->createExceptionHandler();
+        $request = new ServerRequest(
+            method: $method,
+            uri: $uri,
+        );
+
+        $response = $router->process($request, $handler);
+
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals($expectedResponse, (string) $response->getBody());
+    }
+
+    public static function dataUnicodeRoutes(): iterable
+    {
+        yield 'direct' => [
+            'GET',
+            '/пользователь/главный',
+            'Привет, Контроллеры/Пользователь/ГлавныйКонтроллер!',
+        ];
+    }
+
     private function createRouter(): FileRouter
     {
         $container = new SimpleContainer([
@@ -280,6 +311,8 @@ final class FileRouterTest extends TestCase
 
             App3\Controller\UserController::class => new App3\Controller\UserController(),
             App3\Controller\User\IndexController::class => new App3\Controller\User\IndexController(),
+
+            App4\Контроллеры\Пользователь\ГлавныйКонтроллер::class => new App4\Контроллеры\Пользователь\ГлавныйКонтроллер(),
         ]);
 
         return new FileRouter(

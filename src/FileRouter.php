@@ -60,15 +60,14 @@ final class FileRouter implements MiddlewareInterface
             }
 
             /** @psalm-suppress InvalidPropertyFetch */
-            $actions = $controllerClass::$actions ?? [
+            $action = $possibleAction ?? ($controllerClass::$actions ?? [
                 'HEAD' => 'head',
                 'OPTIONS' => 'options',
                 'GET' => 'index',
                 'POST' => 'create',
                 'PUT' => 'update',
                 'DELETE' => 'delete',
-            ];
-            $action = $possibleAction ?? $actions[$request->getMethod()] ?? null;
+            ])[$request->getMethod()] ?? null;
 
             if ($action === null) {
                 continue;
@@ -93,7 +92,7 @@ final class FileRouter implements MiddlewareInterface
     private function parseRequestPath(ServerRequestInterface $request): iterable
     {
         $possibleAction = null;
-        $path = $request->getUri()->getPath();
+        $path = urldecode($request->getUri()->getPath());
         if ($path === '/') {
             $controllerName = 'Index';
 
@@ -107,8 +106,8 @@ final class FileRouter implements MiddlewareInterface
         }
 
         $controllerName = preg_replace_callback(
-            '#(/.)#',
-            static fn(array $matches) => strtoupper($matches[1]),
+            '#(/.)#u',
+            static fn(array $matches) => mb_strtoupper($matches[1]),
             $path,
         );
 
