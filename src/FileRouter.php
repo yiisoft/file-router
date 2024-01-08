@@ -16,6 +16,7 @@ final class FileRouter implements MiddlewareInterface
     private string $classPostfix = 'Controller';
     private string $namespace = 'App';
     private string $defaultControllerName = 'Index';
+    private string $routePrefix = '';
 
     public function __construct(
         private readonly MiddlewareDispatcher $middlewareDispatcher,
@@ -70,6 +71,17 @@ final class FileRouter implements MiddlewareInterface
         return $new;
     }
 
+    /**
+     * Sets the route prefix.
+     */
+    public function withRoutePrefix(string $prefix): self
+    {
+        $new = clone $this;
+        $new->routePrefix = $prefix;
+
+        return $new;
+    }
+
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $possibleEntrypoints = $this->parseRequestPath($request);
@@ -119,6 +131,14 @@ final class FileRouter implements MiddlewareInterface
     {
         $possibleAction = null;
         $path = urldecode($request->getUri()->getPath());
+
+        if ($this->routePrefix !== '' && str_starts_with($path, $this->routePrefix)) {
+            $path = mb_substr($path, strlen($this->routePrefix));
+            if ($path === '') {
+                $path = '/';
+            }
+        }
+
         if ($path === '/') {
             yield [
                 $this->cleanClassname(

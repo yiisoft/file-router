@@ -15,6 +15,7 @@ use Yiisoft\FileRouter\Tests\Support\App1;
 use Yiisoft\FileRouter\Tests\Support\App2;
 use Yiisoft\FileRouter\Tests\Support\App3;
 use Yiisoft\FileRouter\Tests\Support\App4;
+use Yiisoft\FileRouter\Tests\Support\App5;
 use Yiisoft\FileRouter\Tests\Support\HeaderMiddleware;
 use Yiisoft\Middleware\Dispatcher\MiddlewareDispatcher;
 use Yiisoft\Middleware\Dispatcher\MiddlewareFactory;
@@ -319,6 +320,63 @@ final class FileRouterTest extends TestCase
         ];
     }
 
+    #[DataProvider('dataModularity')]
+    public function testModularity(
+        string $namespace,
+        string $routePrefix,
+        string $method,
+        string $uri,
+        string $expectedResult,
+    ): void {
+        $router = $this->createRouter();
+        $router = $router
+            ->withNamespace($namespace)
+            ->withRoutePrefix($routePrefix);
+
+        $handler = $this->createExceptionHandler();
+        $request = new ServerRequest(
+            method: $method,
+            uri: $uri,
+        );
+
+        $response = $router->process($request, $handler);
+
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals($expectedResult, (string) $response->getBody());
+    }
+
+    public static function dataModularity(): iterable
+    {
+        yield 'module1 /' => [
+            'Yiisoft\\FileRouter\\Tests\\Support\\App5\\Module1',
+            '/module1',
+            'GET',
+            '/module1',
+            'Hello, module1!',
+        ];
+        yield 'module1 /index' => [
+            'Yiisoft\\FileRouter\\Tests\\Support\\App5\\Module1',
+            '/module1',
+            'GET',
+            '/module1/',
+            'Hello, module1!',
+        ];
+        yield 'module2 /index' => [
+            'Yiisoft\\FileRouter\\Tests\\Support\\App5\\Module2',
+            '/module2',
+            'GET',
+            '/module2/index',
+            'Hello, module2!',
+        ];
+        yield 'm/o/d/u/l/e /index' => [
+            'Yiisoft\\FileRouter\\Tests\\Support\\App5\\Module2',
+            '/m/o/d/u/l/e',
+            'GET',
+            '/m/o/d/u/l/e/index',
+            'Hello, module2!',
+        ];
+    }
+
     private function createRouter(): FileRouter
     {
         $container = new SimpleContainer([
@@ -333,7 +391,11 @@ final class FileRouterTest extends TestCase
             App3\Controller\UserController::class => new App3\Controller\UserController(),
             App3\Controller\User\IndexController::class => new App3\Controller\User\IndexController(),
 
-            App4\Контроллеры\Пользователь\ГлавныйКонтроллер::class => new App4\Контроллеры\Пользователь\ГлавныйКонтроллер(),
+            App4\Контроллеры\Пользователь\ГлавныйКонтроллер::class => new App4\Контроллеры\Пользователь\ГлавныйКонтроллер(
+            ),
+
+            App5\Module1\Controller\IndexController::class => new App5\Module1\Controller\IndexController(),
+            App5\Module2\Controller\IndexController::class => new App5\Module2\Controller\IndexController(),
         ]);
 
         return new FileRouter(
