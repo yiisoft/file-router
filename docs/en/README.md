@@ -57,6 +57,14 @@ Sets the default controller name.
 
 By default, it is set to `Index`.
 
+#### `withRoutePrefix(string $prefix): self`
+
+Sets the route prefix.
+
+By default, it is empty.
+
+It could be useful if you want to add a prefix to all routes or to separate routes from different [modules](#modularity).
+
 ## Middlewares
 
 `\Yiisoft\FileRouter\FileRouter` supports adding middlewares to the routes.
@@ -173,10 +181,12 @@ return [
         [
             'class' => FileRouter::class,
             'withNamespace()' => ['App\\Module1\\'],
+            'withRoutePrefix()' => ['module1'],
         ],
         [
             'class' => FileRouter::class,
             'withNamespace()' => ['App\\Module2\\'],
+            'withRoutePrefix()' => ['module2'],
         ],
         // ...
     ]
