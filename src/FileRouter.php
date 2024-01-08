@@ -22,6 +22,11 @@ final class FileRouter implements MiddlewareInterface
     ) {
     }
 
+    /**
+     * Sets the directory where controllers are located.
+     *
+     * @see withNamespace() if you want to set the namespace for controller classes.
+     */
     public function withBaseControllerDirectory(string $directory): self
     {
         $new = clone $this;
@@ -30,6 +35,9 @@ final class FileRouter implements MiddlewareInterface
         return $new;
     }
 
+    /**
+     * Sets the postfix for controller class names.
+     */
     public function withClassPostfix(string $postfix): self
     {
         $new = clone $this;
@@ -38,6 +46,11 @@ final class FileRouter implements MiddlewareInterface
         return $new;
     }
 
+    /**
+     * Sets the namespace for controller classes.
+     *
+     * @see withBaseControllerDirectory() if you want to set the directory where controllers are located.
+     */
     public function withNamespace(string $namespace): self
     {
         $new = clone $this;
@@ -46,6 +59,9 @@ final class FileRouter implements MiddlewareInterface
         return $new;
     }
 
+    /**
+     * Sets the default controller name.
+     */
     public function withDefaultControllerName(string $name): self
     {
         $new = clone $this;
@@ -75,6 +91,7 @@ final class FileRouter implements MiddlewareInterface
                 'GET' => 'index',
                 'POST' => 'create',
                 'PUT' => 'update',
+                'PATCH' => 'patch',
                 'DELETE' => 'delete',
             ])[$request->getMethod()] ?? null;
 
