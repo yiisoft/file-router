@@ -16,12 +16,18 @@ final class FileRouter implements MiddlewareInterface
     private string $classPostfix = 'Controller';
     private string $namespace = 'App';
     private string $defaultControllerName = 'Index';
+    private string $routePrefix = '';
 
     public function __construct(
         private readonly MiddlewareDispatcher $middlewareDispatcher,
     ) {
     }
 
+    /**
+     * Sets the directory where controllers are located.
+     *
+     * @see withNamespace() if you want to set the namespace for controller classes.
+     */
     public function withBaseControllerDirectory(string $directory): self
     {
         $new = clone $this;
@@ -30,6 +36,9 @@ final class FileRouter implements MiddlewareInterface
         return $new;
     }
 
+    /**
+     * Sets the postfix for controller class names.
+     */
     public function withClassPostfix(string $postfix): self
     {
         $new = clone $this;
@@ -38,6 +47,11 @@ final class FileRouter implements MiddlewareInterface
         return $new;
     }
 
+    /**
+     * Sets the namespace for controller classes.
+     *
+     * @see withBaseControllerDirectory() if you want to set the directory where controllers are located.
+     */
     public function withNamespace(string $namespace): self
     {
         $new = clone $this;
@@ -46,10 +60,24 @@ final class FileRouter implements MiddlewareInterface
         return $new;
     }
 
+    /**
+     * Sets the default controller name.
+     */
     public function withDefaultControllerName(string $name): self
     {
         $new = clone $this;
         $new->defaultControllerName = $name;
+
+        return $new;
+    }
+
+    /**
+     * Sets the route prefix.
+     */
+    public function withRoutePrefix(string $prefix): self
+    {
+        $new = clone $this;
+        $new->routePrefix = $prefix;
 
         return $new;
     }
@@ -75,6 +103,7 @@ final class FileRouter implements MiddlewareInterface
                 'GET' => 'index',
                 'POST' => 'create',
                 'PUT' => 'update',
+                'PATCH' => 'patch',
                 'DELETE' => 'delete',
             ])[$request->getMethod()] ?? null;
 
@@ -102,6 +131,14 @@ final class FileRouter implements MiddlewareInterface
     {
         $possibleAction = null;
         $path = urldecode($request->getUri()->getPath());
+
+        if ($this->routePrefix !== '' && str_starts_with($path, $this->routePrefix)) {
+            $path = mb_substr($path, strlen($this->routePrefix));
+            if ($path === '') {
+                $path = '/';
+            }
+        }
+
         if ($path === '/') {
             yield [
                 $this->cleanClassname(
