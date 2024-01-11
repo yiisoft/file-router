@@ -87,6 +87,9 @@ final class FileRouter implements MiddlewareInterface
         $possibleEntrypoints = $this->parseRequestPath($request);
 
         foreach ($possibleEntrypoints as $possibleEntrypoint) {
+            if (!is_array($possibleEntrypoint)) {
+                continue;
+            }
             /**
              * @psalm-var class-string $controllerClass
              * @psalm-var string|null $possibleAction
@@ -96,7 +99,7 @@ final class FileRouter implements MiddlewareInterface
                 continue;
             }
 
-            /** @psalm-suppress InvalidPropertyFetch */
+            /** @psalm-suppress InvalidPropertyFetch, MixedArrayAccess */
             $action = $possibleAction ?? ($controllerClass::$actions ?? [
                 'HEAD' => 'head',
                 'OPTIONS' => 'options',
@@ -107,7 +110,7 @@ final class FileRouter implements MiddlewareInterface
                 'DELETE' => 'delete',
             ])[$request->getMethod()] ?? null;
 
-            if ($action === null) {
+            if (!is_string($action)) {
                 continue;
             }
 
@@ -115,10 +118,16 @@ final class FileRouter implements MiddlewareInterface
                 continue;
             }
 
-            /** @psalm-suppress InvalidPropertyFetch */
+            /** @psalm-suppress InvalidPropertyFetch, MixedArrayAccess */
             $middlewares = $controllerClass::$middlewares[$action] ?? [];
+
+            if (!is_array($middlewares)) {
+                $middlewares = [];
+            }
+
             $middlewares[] = [$controllerClass, $action];
 
+            /** @psalm-suppress MixedArgumentTypeCoercion */
             $middlewareDispatcher = $this->middlewareDispatcher->withMiddlewares($middlewares);
 
             return $middlewareDispatcher->dispatch($request, $handler);
