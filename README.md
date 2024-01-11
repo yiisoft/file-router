@@ -29,7 +29,9 @@ The package could be installed with composer:
 composer require yiisoft/file-router
 ```
 
-## General usage
+## Documentation
+
+- [English](docs/en/README.md)
 
 ## Testing
 
