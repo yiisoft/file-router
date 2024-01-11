@@ -33,31 +33,31 @@ return [
 
 `\Yiisoft\FileRouter\FileRouter` supports the following configuration options:
 
-#### `withBaseControllerDirectory(string $directory): self`
+### `withBaseControllerDirectory(string $directory): self`
 
 Sets the directory where controllers are located.
 
 By default, it is set to `Controller`.
 
-#### `withClassPostfix(string $postfix): self`
+### `withClassPostfix(string $postfix): self`
 
 Sets the postfix for controller class names.
 
 By default, it is set to `Controller`.
 
-#### `withNamespace(string $namespace): self`
+### `withNamespace(string $namespace): self`
 
 Sets the namespace for controller classes.
 
 By default, it is set to `App`.
 
-#### `withDefaultControllerName(string $name): self`
+### `withDefaultControllerName(string $name): self`
 
 Sets the default controller name.
 
 By default, it is set to `Index`.
 
-#### `withRoutePrefix(string $prefix): self`
+### `withRoutePrefix(string $prefix): self`
 
 Sets the route prefix.
 
@@ -110,7 +110,7 @@ The router maps HTTP methods to controller action methods as follows:
 
 > Note: If the controller does not have a method that matches the HTTP method, the router **will not** throw an exception.
 
-#### Custom routes
+### Custom routes
 
 To add a custom route, add the static property `$actions` to the controller class:
 
