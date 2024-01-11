@@ -129,15 +129,19 @@ final class FileRouter implements MiddlewareInterface
 
     private function parseRequestPath(ServerRequestInterface $request): iterable
     {
-        $possibleAction = null;
         $path = urldecode($request->getUri()->getPath());
 
-        if ($this->routePrefix !== '' && str_starts_with($path, $this->routePrefix)) {
-            $path = mb_substr($path, strlen($this->routePrefix));
+        if ($this->routePrefix !== '') {
+            if (!str_starts_with($path, $this->routePrefix)) {
+                return;
+            }
+            $path = mb_substr($path, mb_strlen($this->routePrefix));
             if ($path === '') {
                 $path = '/';
             }
         }
+
+        $possibleAction = null;
 
         if ($path === '/') {
             yield [

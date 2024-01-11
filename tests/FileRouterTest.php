@@ -377,6 +377,25 @@ final class FileRouterTest extends TestCase
         ];
     }
 
+    public function testModularityFastPath(): void
+    {
+        $router = $this->createRouter();
+        $router = $router
+            ->withNamespace('Yiisoft\\FileRouter\\Tests\\Support\\App5\\Module1')
+            ->withRoutePrefix('/module1');
+
+
+        $handler = $this->createExceptionHandler();
+        $request = new ServerRequest(
+            method: 'GET',
+            uri: '/module2',
+        );
+
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('Not implemented from tests.');
+        $router->process($request, $handler);
+    }
+
     private function createRouter(): FileRouter
     {
         $container = new SimpleContainer([
