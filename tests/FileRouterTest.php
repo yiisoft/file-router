@@ -424,13 +424,11 @@ final class FileRouterTest extends TestCase
 
     private function createExceptionHandler(): RequestHandlerInterface
     {
-        return new class implements RequestHandlerInterface {
+        return new class () implements RequestHandlerInterface {
             public function handle(ServerRequestInterface $request): ResponseInterface
             {
                 throw new \Exception('Not implemented from tests.');
             }
         };
-        {
-        }
     }
 }
