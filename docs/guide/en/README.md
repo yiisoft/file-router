@@ -1,9 +1,7 @@
-# Documentation
+# Yii File Router
 
 > Note: The router can be used along with the [`yiisoft/router`](https://github.com/yiisoft/router) package.
-
-> Note: Once the router found a matching route, it will interrupt the middleware queue and execute the controller
-> action.
+> Once the router found a matching route, it will interrupt the middleware queue and execute the controller action.
 
 ## General usage
 
@@ -130,7 +128,6 @@ class UserController
 
 > Note: Once you override the actions map, the router will only look for the actions specified in the map.
 > In the example above, the router will fail to find the `index` / `delete`, etc. actions
-
 
 ### Route collision
 
