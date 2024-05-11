@@ -1,7 +1,9 @@
 # Yii File Router
 
-> Note: The router can be used along with the [`yiisoft/router`](https://github.com/yiisoft/router) package.
-> Once the router found a matching route, it will interrupt the middleware queue and execute the controller action.
+> **Notes:**
+>
+>- The router can be used along with the [`yiisoft/router`](https://github.com/yiisoft/router) package.
+>- Once the router found a matching route, it will interrupt the middleware queue and execute the controller action.
 
 ## General usage
 
