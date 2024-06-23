@@ -15,7 +15,7 @@
 [![type-coverage](https://shepherd.dev/github/yiisoft/file-router/coverage.svg)](https://shepherd.dev/github/yiisoft/file-router)
 [![psalm-level](https://shepherd.dev/github/yiisoft/file-router/level.svg)](https://shepherd.dev/github/yiisoft/file-router)
 
-The package ...
+The package provides a convention-based router middleware that chooses controller based on its namespace and class name.
 
 ## Requirements
 
