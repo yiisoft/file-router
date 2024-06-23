@@ -10,6 +10,9 @@ use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Yiisoft\Middleware\Dispatcher\MiddlewareDispatcher;
 
+/**
+ * Provides a convention-based router middleware that chooses controller based on its namespace and class name.
+ */
 final class FileRouter implements MiddlewareInterface
 {
     private string $baseControllerDirectory = 'Controller';
