@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Yiisoft\FileRouter\Tests;
 
+use Exception;
 use HttpSoft\Message\ServerRequest;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
@@ -45,9 +46,6 @@ final class FileRouterTest extends TestCase
 
     public function testTrailingSlash(): void
     {
-        /**
-         * @var FileRouter $router
-         */
         $router = $this->createRouter();
         $router = $router
             ->withNamespace('Yiisoft\FileRouter\Tests\Support\App1');
@@ -67,9 +65,6 @@ final class FileRouterTest extends TestCase
     #[DataProvider('dataRouter')]
     public function testRouter(string $method, string $uri, string $expectedResponse): void
     {
-        /**
-         * @var FileRouter $router
-         */
         $router = $this->createRouter();
         $router = $router
             ->withNamespace('Yiisoft\FileRouter\Tests\Support\App1');
@@ -122,7 +117,7 @@ final class FileRouterTest extends TestCase
             uri: '/',
         );
 
-        $this->expectException(\Exception::class);
+        $this->expectException(Exception::class);
         $this->expectExceptionMessage('Not implemented from tests.');
         $router->process($request, $handler);
     }
@@ -139,7 +134,7 @@ final class FileRouterTest extends TestCase
             uri: '/',
         );
 
-        $this->expectException(\Exception::class);
+        $this->expectException(Exception::class);
         $this->expectExceptionMessage('Not implemented from tests.');
         $router->process($request, $handler);
     }
@@ -156,7 +151,7 @@ final class FileRouterTest extends TestCase
             uri: '/test/123',
         );
 
-        $this->expectException(\Exception::class);
+        $this->expectException(Exception::class);
         $this->expectExceptionMessage('Not implemented from tests.');
         $router->process($request, $handler);
     }
@@ -173,7 +168,7 @@ final class FileRouterTest extends TestCase
             uri: '/test//123///',
         );
 
-        $this->expectException(\Exception::class);
+        $this->expectException(Exception::class);
         $this->expectExceptionMessage('Not implemented from tests.');
         $router->process($request, $handler);
     }
@@ -391,7 +386,7 @@ final class FileRouterTest extends TestCase
             uri: '/module2',
         );
 
-        $this->expectException(\Exception::class);
+        $this->expectException(Exception::class);
         $this->expectExceptionMessage('Not implemented from tests.');
         $router->process($request, $handler);
     }
@@ -427,7 +422,7 @@ final class FileRouterTest extends TestCase
         return new class () implements RequestHandlerInterface {
             public function handle(ServerRequestInterface $request): ResponseInterface
             {
-                throw new \Exception('Not implemented from tests.');
+                throw new Exception('Not implemented from tests.');
             }
         };
     }

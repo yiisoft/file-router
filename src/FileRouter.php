@@ -87,17 +87,17 @@ final class FileRouter implements MiddlewareInterface
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        $possibleEntrypoints = $this->parseRequestPath($request);
+        $possibleEntryPoints = $this->parseRequestPath($request);
 
-        foreach ($possibleEntrypoints as $possibleEntrypoint) {
-            if (!is_array($possibleEntrypoint)) {
+        foreach ($possibleEntryPoints as $possibleEntryPoint) {
+            if (!is_array($possibleEntryPoint)) {
                 continue;
             }
             /**
              * @psalm-var class-string $controllerClass
              * @psalm-var string|null $possibleAction
              */
-            [$controllerClass, $possibleAction] = $possibleEntrypoint;
+            [$controllerClass, $possibleAction] = $possibleEntryPoint;
             if (!class_exists($controllerClass)) {
                 continue;
             }

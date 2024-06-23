@@ -1,9 +1,8 @@
 # Yii File Router
 
-> **Notes:**
->
->- The router can be used along with the [`yiisoft/router`](https://github.com/yiisoft/router) package.
->- Once the router found a matching route, it will interrupt the middleware queue and execute the controller action.
+> Note:
+> - You can use the router along with the [`yiisoft/router`](https://github.com/yiisoft/router) package.
+> - Once the router found a matching route, it will interrupt the middleware queue and execute the controller action.
 
 ## General usage
 
@@ -35,41 +34,37 @@ return [
 
 ### `withBaseControllerDirectory(string $directory): self`
 
-Sets the directory where controllers are located.
-
-By default, it is set to `Controller`.
+The method sets the directory where the router locates controllers.
+By default, it's `Controller`.
 
 ### `withClassPostfix(string $postfix): self`
 
-Sets the postfix for controller class names.
-
-By default, it is set to `Controller`.
+The method sets the postfix for controller class names.
+By default, it's `Controller`.
 
 ### `withNamespace(string $namespace): self`
 
-Sets the namespace for controller classes.
-
-By default, it is set to `App`.
+The method sets the namespace for controller classes.
+By default, it's `App`.
 
 ### `withDefaultControllerName(string $name): self`
 
-Sets the default controller name.
-
-By default, it is set to `Index`.
+The method sets default controller name.
+By default, it's `Index`.
 
 ### `withRoutePrefix(string $prefix): self`
 
-Sets the route prefix.
-
+The method sets the route prefix.
 By default, it is empty.
 
-It could be useful if you want to add a prefix to all routes or to separate routes from different [modules](#modularity).
+It could be useful if you want to add a prefix to all routes or to separate routes
+from different [modules](#modularity).
 
 ## Middlewares
 
 `\Yiisoft\FileRouter\FileRouter` supports adding middlewares to the routes.
 
-To add a middleware, add the static property `$middlewares` to the controller class:
+To add middleware, add the static property `$middlewares` to the controller class:
 
 ```php
 class UserController
@@ -87,7 +82,8 @@ class UserController
 }
 ```
 
-Where `index` is the method name and the value is an array of middleware class names, or middleware definitions.
+Where `index` is the method name and the value is an array of middleware class names
+or middleware definitions.
 
 Look at all supported middleware definitions formats in
 the [Middleware Dispatcher](https://github.com/yiisoft/middleware-dispatcher#general-usage) package.
@@ -128,7 +124,7 @@ class UserController
 }
 ```
 
-> Note: Once you override the actions map, the router will only look for the actions specified in the map.
+> Note: Once you override the action map, the router will only look for the actions specified in the map.
 > In the example above, the router will fail to find the `index` / `delete`, etc. actions
 
 ### Route collision
@@ -192,4 +188,5 @@ return [
 ];
 ```
 
-As a usual middleware, each router will be executed one by one. The first router that matches the route will be used.
+Each router is a middleware executed sequentially.
+If the first router finds the match, the second one doesn't run.
