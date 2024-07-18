@@ -391,6 +391,17 @@ final class FileRouterTest extends TestCase
         $router->process($request, $handler);
     }
 
+    public function testImmutability(): void
+    {
+        $router = $this->createRouter();
+
+        $this->assertNotSame($router, $router->withBaseControllerDirectory('x'));
+        $this->assertNotSame($router, $router->withClassPostfix('x'));
+        $this->assertNotSame($router, $router->withNamespace('x'));
+        $this->assertNotSame($router, $router->withDefaultControllerName('x'));
+        $this->assertNotSame($router, $router->withRoutePrefix('x'));
+    }
+
     private function createRouter(): FileRouter
     {
         $container = new SimpleContainer([
