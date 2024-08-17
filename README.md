@@ -6,8 +6,8 @@
     <br>
 </p>
 
-[![Latest Stable Version](https://poser.pugx.org/yiisoft/file-router/v/stable.png)](https://packagist.org/packages/yiisoft/file-router)
-[![Total Downloads](https://poser.pugx.org/yiisoft/file-router/downloads.png)](https://packagist.org/packages/yiisoft/file-router)
+[![Latest Stable Version](https://poser.pugx.org/yiisoft/file-router/v)](https://packagist.org/packages/yiisoft/file-router)
+[![Total Downloads](https://poser.pugx.org/yiisoft/file-router/downloads)](https://packagist.org/packages/yiisoft/file-router)
 [![Build status](https://github.com/yiisoft/file-router/workflows/build/badge.svg)](https://github.com/yiisoft/file-router/actions?query=workflow%3Abuild)
 [![Code Coverage](https://codecov.io/gh/yiisoft/file-router/branch/master/graph/badge.svg)](https://codecov.io/gh/yiisoft/file-router)
 [![Mutation testing badge](https://img.shields.io/endpoint?style=flat&url=https%3A%2F%2Fbadge-api.stryker-mutator.io%2Fgithub.com%2Fyiisoft%2Ffile-router%2Fmaster)](https://dashboard.stryker-mutator.io/reports/github.com/yiisoft/file-router/master)
