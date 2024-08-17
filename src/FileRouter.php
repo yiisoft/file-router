@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Yiisoft\FileRouter;
 
+use Generator;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -90,19 +91,18 @@ final class FileRouter implements MiddlewareInterface
         $possibleEntryPoints = $this->parseRequestPath($request);
 
         foreach ($possibleEntryPoints as $possibleEntryPoint) {
-            if (!is_array($possibleEntryPoint)) {
-                continue;
-            }
-            /**
-             * @psalm-var class-string $controllerClass
-             * @psalm-var string|null $possibleAction
-             */
             [$controllerClass, $possibleAction] = $possibleEntryPoint;
             if (!class_exists($controllerClass)) {
                 continue;
             }
 
-            /** @psalm-suppress InvalidPropertyFetch, MixedArrayAccess */
+            /**
+             * We believe that `$actions` in controller class, if exists, is a correct array.
+             *
+             * @var string|null $action
+             *
+             * @psalm-suppress InvalidPropertyFetch, MixedArrayAccess
+             */
             $action = $possibleAction ?? ($controllerClass::$actions ?? [
                 'HEAD' => 'head',
                 'OPTIONS' => 'options',
@@ -112,8 +112,7 @@ final class FileRouter implements MiddlewareInterface
                 'PATCH' => 'patch',
                 'DELETE' => 'delete',
             ])[$request->getMethod()] ?? null;
-
-            if (!is_string($action)) {
+            if ($action === null) {
                 continue;
             }
 
@@ -121,16 +120,16 @@ final class FileRouter implements MiddlewareInterface
                 continue;
             }
 
-            /** @psalm-suppress InvalidPropertyFetch, MixedArrayAccess */
+            /**
+             * We believe that `$middlewares` in controller class, if exists, is a correct array.
+             *
+             * @var array[]|callable[]|string[] $middlewares
+             *
+             * @psalm-suppress InvalidPropertyFetch, MixedArrayAccess
+             */
             $middlewares = $controllerClass::$middlewares[$action] ?? [];
-
-            if (!is_array($middlewares)) {
-                $middlewares = [];
-            }
-
             $middlewares[] = [$controllerClass, $action];
 
-            /** @psalm-suppress MixedArgumentTypeCoercion */
             $middlewareDispatcher = $this->middlewareDispatcher->withMiddlewares($middlewares);
 
             return $middlewareDispatcher->dispatch($request, $handler);
@@ -139,7 +138,10 @@ final class FileRouter implements MiddlewareInterface
         return $handler->handle($request);
     }
 
-    private function parseRequestPath(ServerRequestInterface $request): iterable
+    /**
+     * @psalm-return Generator<list{string,string|null}>
+     */
+    private function parseRequestPath(ServerRequestInterface $request): Generator
     {
         $path = urldecode($request->getUri()->getPath());
 
