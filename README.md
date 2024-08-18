@@ -31,31 +31,29 @@ composer require yiisoft/file-router
 
 ## General usage
 
-1. Add `\Yiisoft\FileRouter\FileRouter` to the list of middlewares in your application configuration:
+1. Add `\Yiisoft\FileRouter\FileRouter` to the list of middlewares in your application configuration, `web/params.php`:
 
-`web/params.php`
-
-```php
-return [
-    'middlewares' => [
-        // ...
-        \Yiisoft\FileRouter\FileRouter::class,
-        // or
-        [
-            'class' => FileRouter::class,
-            'withNamespace()' => ['MyApp\\Package1'],
-            'withDefaultControllerName()' => ['Default'],
-        ],
-        // ...
-    ]
-];
-```
+    ```php
+    return [
+        'middlewares' => [
+            // ...
+            \Yiisoft\FileRouter\FileRouter::class,
+            // or
+            [
+                'class' => FileRouter::class,
+                'withNamespace()' => ['MyApp\\Package1'],
+                'withDefaultControllerName()' => ['Default'],
+            ],
+            // ...
+        ]
+    ];
+    ```
 
 2. Configure the router for your needs.
 
 ## Documentation
 
-For additional information check the following docs:
+For additional information, check the following docs:
 
 - Guide: [English](docs/guide/en/README.md), [Português - Brasil](docs/guide/pt-BR/README.md)
 - [Internals](docs/internals.md)

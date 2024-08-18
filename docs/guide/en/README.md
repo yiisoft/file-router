@@ -6,25 +6,23 @@
 
 ## General usage
 
-1. Add `\Yiisoft\FileRouter\FileRouter` to the list of middlewares in your application configuration:
+1. Add `\Yiisoft\FileRouter\FileRouter` to the list of middlewares in your application configuration, `web/params.php`:
 
-`web/params.php`
-
-```php
-return [
-    'middlewares' => [
-        // ...
-        \Yiisoft\FileRouter\FileRouter::class,
-        // or
-        [
-            'class' => FileRouter::class,
-            'withNamespace()' => ['MyApp\\Package1'],
-            'withDefaultControllerName()' => ['Default'],
-        ],
-        // ...
-    ]
-];
-```
+    ```php
+    return [
+        'middlewares' => [
+            // ...
+            \Yiisoft\FileRouter\FileRouter::class,
+            // or
+            [
+                'class' => FileRouter::class,
+                'withNamespace()' => ['MyApp\\Package1'],
+                'withDefaultControllerName()' => ['Default'],
+            ],
+            // ...
+        ]
+    ];
+    ```
 
 2. [Configure the router](#configuration) for your needs.
 

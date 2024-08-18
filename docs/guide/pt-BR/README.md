@@ -7,25 +7,23 @@
 
 ## Uso geral
 
-1. Adicione `\Yiisoft\FileRouter\FileRouter` à lista de middlewares na configuração da sua aplicação:
+1. Adicione `\Yiisoft\FileRouter\FileRouter` à lista de middlewares na configuração da sua aplicação, `web/params.php`:
 
-`web/params.php`
-
-```php
-return [
-    'middlewares' => [
-        // ...
-        \Yiisoft\FileRouter\FileRouter::class,
-        // or
-        [
-            'class' => FileRouter::class,
-            'withNamespace()' => ['MyApp\\Package1'],
-            'withDefaultControllerName()' => ['Default'],
-        ],
-        // ...
-    ]
-];
-```
+    ```php
+    return [
+        'middlewares' => [
+            // ...
+            \Yiisoft\FileRouter\FileRouter::class,
+            // or
+            [
+                'class' => FileRouter::class,
+                'withNamespace()' => ['MyApp\\Package1'],
+                'withDefaultControllerName()' => ['Default'],
+            ],
+            // ...
+        ]
+    ];
+    ```
 
 2. [Configure o roteador](#configuração) de acordo com suas necessidades.
 
