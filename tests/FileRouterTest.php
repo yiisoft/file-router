@@ -103,6 +103,16 @@ final class FileRouterTest extends TestCase
             '/user',
             'Hello, delete!',
         ];
+        yield 'HEAD /user' => [
+            'HEAD',
+            '/user',
+            'Hello, head!',
+        ];
+        yield 'OPTIONS /user' => [
+            'OPTIONS',
+            '/user',
+            'Hello, options!',
+        ];
     }
 
     public function testUnsupportedMethod(): void
