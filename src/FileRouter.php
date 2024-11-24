@@ -155,14 +155,10 @@ final class FileRouter implements MiddlewareInterface
             }
         }
 
-        $possibleAction = null;
-
         if ($path === '/') {
             yield [
-                $this->cleanClassname(
-                    $this->namespace . '\\' . $this->baseControllerDirectory . '\\' . $this->defaultControllerName . $this->classPostfix
-                ),
-                $possibleAction,
+                $this->makeClassName($this->defaultControllerName),
+                null,
             ];
             return;
         }
@@ -173,43 +169,43 @@ final class FileRouter implements MiddlewareInterface
             $path,
         );
 
-        if (!preg_match('#^(.*?)/([^/]+)/?$#', $controllerName, $matches)) {
+        if (!preg_match('#^/?(.*?)/([^/]+)/?$#', $controllerName, $matches)) {
             return;
         }
 
-        $directoryPath = $matches[1];
-        $controllerName = $matches[2];
+        [$_, $directoryPath, $controllerName] = $matches;
 
         yield [
-            $this->cleanClassname(
-                $this->namespace . '\\' . $this->baseControllerDirectory . '\\' . $directoryPath . '\\' . $controllerName . $this->classPostfix
-            ),
-            $possibleAction,
+            $this->makeClassName($controllerName, $directoryPath),
+            null,
         ];
 
-        if (preg_match('#^(.*?)/([^/]+)/?$#', $directoryPath, $matches)) {
-            $possibleAction = strtolower($controllerName);
-            $directoryPath = $matches[1];
-            $controllerName = $matches[2];
+        if ($directoryPath === '') {
+            yield [
+                $this->makeClassName($this->defaultControllerName, $controllerName),
+                null,
+            ];
         } else {
-            $directoryPath = $controllerName;
-            $controllerName = $this->defaultControllerName;
+            yield [
+                $this->makeClassName($directoryPath),
+                strtolower($controllerName),
+            ];
         }
-
-        yield [
-            $this->cleanClassname(
-                $this->namespace . '\\' . $this->baseControllerDirectory . '\\' . $directoryPath . '\\' . $controllerName . $this->classPostfix
-            ),
-            $possibleAction,
-        ];
     }
 
-    private function cleanClassname(string $className): string
+    private function makeClassName(string $controllerName, string $directoryPath = ''): string
     {
-        return str_replace(
-            ['\\/\\', '\\/', '\\\\'],
-            '\\',
-            $className,
-        );
+        $parts = [];
+        if ($this->namespace !== '') {
+            $parts[] = $this->namespace;
+        }
+        if ($this->baseControllerDirectory !== '') {
+            $parts[] = $this->baseControllerDirectory;
+        }
+        if ($directoryPath !== '') {
+            $parts[] = $directoryPath;
+        }
+        $parts[] = $controllerName . $this->classPostfix;
+        return implode('\\', $parts);
     }
 }
