@@ -461,7 +461,7 @@ final class FileRouterTest extends TestCase
 
             App5\Module1\Controller\IndexController::class => new App5\Module1\Controller\IndexController(),
             App5\Module2\Controller\IndexController::class => new App5\Module2\Controller\IndexController(),
-            App5\Модуль3\Controller\IndexController::class => new App5\Модуль3\Controller\IndexController(),
+            App5\Модуль3\Controller\Index\IndexController::class => new App5\Модуль3\Controller\Index\IndexController(),
 
             App6\Controller\UserController::class => new App6\Controller\UserController(),
             App6\Controller\User\IndexController::class => new App6\Controller\User\IndexController(),
