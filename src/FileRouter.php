@@ -164,8 +164,8 @@ final class FileRouter implements MiddlewareInterface
         }
 
         $controllerName = preg_replace_callback(
-            '#(/.)#u',
-            static fn(array $matches) => mb_strtoupper($matches[1]),
+            '#/.#u',
+            static fn(array $matches) => mb_strtoupper($matches[0]),
             $path,
         );
 
