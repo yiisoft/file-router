@@ -370,6 +370,13 @@ final class FileRouterTest extends TestCase
             '/m/o/d/u/l/e/index',
             'Hello, module2!',
         ];
+        yield 'модуль3 /index' => [
+            'Yiisoft\\FileRouter\\Tests\\Support\\App5\\Модуль3',
+            '/Модуль3',
+            'GET',
+            '/Модуль3/index',
+            'Hello, модуль3!',
+        ];
     }
 
     public function testModularityFastPath(): void
@@ -421,6 +428,7 @@ final class FileRouterTest extends TestCase
 
             App5\Module1\Controller\IndexController::class => new App5\Module1\Controller\IndexController(),
             App5\Module2\Controller\IndexController::class => new App5\Module2\Controller\IndexController(),
+            App5\Модуль3\Controller\IndexController::class => new App5\Модуль3\Controller\IndexController(),
         ]);
 
         return new FileRouter(
