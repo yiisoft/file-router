@@ -119,6 +119,11 @@ final class FileRouterTest extends TestCase
             '/user/profile/view',
             'Hello, User\Profile\IndexController!',
         ];
+        yield 'GET /user/blog/view' => [
+            'GET',
+            '/user/blog/view',
+            'Hello, blog view!',
+        ];
     }
 
     public function testUnsupportedMethod(): void
