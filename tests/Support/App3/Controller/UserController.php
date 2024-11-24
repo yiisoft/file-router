@@ -11,6 +11,11 @@ class UserController
 {
     public function index(): ResponseInterface
     {
-        return new TextResponse('Hello, Controller/UserController!');
+        return new TextResponse('Hello, index Controller/UserController!');
+    }
+
+    public function delete(): ResponseInterface
+    {
+        return new TextResponse('Hello, delete Controller/UserController!');
     }
 }

@@ -282,16 +282,21 @@ final class FileRouterTest extends TestCase
 
     public static function dataRoutesCollision(): iterable
     {
-        yield 'direct' => [
+        yield 'direct get' => [
             'GET',
             '/user',
-            'Hello, Controller/UserController!',
+            'Hello, index Controller/UserController!',
+        ];
+        yield 'direct delete' => [
+            'DELETE',
+            '/user',
+            'Hello, delete Controller/UserController!',
         ];
 
-        yield 'indirect' => [
+        yield 'indirect post' => [
             'POST',
             '/user',
-            'Hello, Controller/User/IndexController!',
+            'Hello, create Controller/User/IndexController!',
         ];
     }
 

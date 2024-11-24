@@ -11,11 +11,11 @@ class IndexController
 {
     public function index(): ResponseInterface
     {
-        return new TextResponse('Hello, Controller/User/IndexController!');
+        return new TextResponse('Hello, index Controller/User/IndexController!');
     }
 
     public function create(): ResponseInterface
     {
-        return new TextResponse('Hello, Controller/User/IndexController!');
+        return new TextResponse('Hello, create Controller/User/IndexController!');
     }
 }
