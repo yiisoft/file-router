@@ -17,6 +17,7 @@ use Yiisoft\FileRouter\Tests\Support\App2;
 use Yiisoft\FileRouter\Tests\Support\App3;
 use Yiisoft\FileRouter\Tests\Support\App4;
 use Yiisoft\FileRouter\Tests\Support\App5;
+use Yiisoft\FileRouter\Tests\Support\App6;
 use Yiisoft\FileRouter\Tests\Support\HeaderMiddleware;
 use Yiisoft\Middleware\Dispatcher\MiddlewareDispatcher;
 use Yiisoft\Middleware\Dispatcher\MiddlewareFactory;
@@ -300,6 +301,23 @@ final class FileRouterTest extends TestCase
         ];
     }
 
+    public function testActions(): void
+    {
+        $router = $this->createRouter();
+        $router = $router->withNamespace('Yiisoft\FileRouter\Tests\Support\App6');
+
+        $handler = $this->createExceptionHandler();
+        $request = new ServerRequest(
+            method: 'POST',
+            uri: '/user',
+        );
+
+        $response = $router->process($request, $handler);
+
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals('Hello, create Controller/User/IndexController!', (string) $response->getBody());
+    }
+
     #[DataProvider('dataUnicodeRoutes')]
     public function testTestUnicodeRoutes(string $method, string $uri, string $expectedResponse): void
     {
@@ -444,6 +462,9 @@ final class FileRouterTest extends TestCase
             App5\Module1\Controller\IndexController::class => new App5\Module1\Controller\IndexController(),
             App5\Module2\Controller\IndexController::class => new App5\Module2\Controller\IndexController(),
             App5\Модуль3\Controller\IndexController::class => new App5\Модуль3\Controller\IndexController(),
+
+            App6\Controller\UserController::class => new App6\Controller\UserController(),
+            App6\Controller\User\IndexController::class => new App6\Controller\User\IndexController(),
         ]);
 
         return new FileRouter(
