@@ -203,9 +203,9 @@ final class FileRouter implements MiddlewareInterface
             $parts[] = $this->baseControllerDirectory;
         }
         if ($directoryPath !== '') {
-            $parts[] = $directoryPath;
+            $parts[] = str_replace('/', '\\', $directoryPath);
         }
-        $parts[] = $controllerName . $this->classPostfix;
+        $parts[] = str_replace('/', '\\', $controllerName) . $this->classPostfix;
         return implode('\\', $parts);
     }
 }

@@ -114,6 +114,11 @@ final class FileRouterTest extends TestCase
             '/user',
             'Hello, options!',
         ];
+        yield 'GET /user/profile/view' => [
+            'GET',
+            '/user/profile/view',
+            'Hello, User\Profile\IndexController!',
+        ];
     }
 
     public function testUnsupportedMethod(): void
@@ -447,6 +452,7 @@ final class FileRouterTest extends TestCase
         $container = new SimpleContainer([
             HeaderMiddleware::class => new HeaderMiddleware(),
 
+            App1\Controller\User\Profile\ViewController::class => new  App1\Controller\User\Profile\ViewController(),
             App1\Controller\User\BlogController::class => new App1\Controller\User\BlogController(),
             App1\Controller\UserController::class => new App1\Controller\UserController(),
             App1\Controller\IndexController::class => new App1\Controller\IndexController(),
