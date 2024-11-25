@@ -173,7 +173,7 @@ final class FileRouter implements MiddlewareInterface
             return;
         }
 
-        [$_, $directoryPath, $controllerName] = $matches;
+        [, $directoryPath, $controllerName] = $matches;
 
         yield [
             $this->makeClassName($controllerName, $directoryPath),
