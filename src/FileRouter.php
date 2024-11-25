@@ -163,16 +163,15 @@ final class FileRouter implements MiddlewareInterface
             return;
         }
 
-        $controllerName = preg_replace_callback(
+        $pathAsNamespace = preg_replace_callback(
             '#/.#u',
             static fn(array $matches) => mb_strtoupper($matches[0]),
             $path,
         );
 
-        if (!preg_match('#^/?(.*?)/([^/]+)/?$#', $controllerName, $matches)) {
+        if (!preg_match('#^/?(.*?)/([^/]+)/?$#', $pathAsNamespace, $matches)) {
             return;
         }
-
         [, $directoryPath, $controllerName] = $matches;
 
         yield [
