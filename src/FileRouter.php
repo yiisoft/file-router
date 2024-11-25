@@ -157,7 +157,7 @@ final class FileRouter implements MiddlewareInterface
 
         if ($path === '/') {
             yield [
-                $this->makeClassName($this->defaultControllerName),
+                $this->makeClassName($this->defaultControllerName, ''),
                 null,
             ];
             return;
@@ -186,13 +186,13 @@ final class FileRouter implements MiddlewareInterface
             ];
         } else {
             yield [
-                $this->makeClassName($directoryPath),
+                $this->makeClassName($directoryPath, ''),
                 strtolower($controllerName),
             ];
         }
     }
 
-    private function makeClassName(string $controllerName, string $directoryPath = ''): string
+    private function makeClassName(string $controllerName, string $directoryPath): string
     {
         $parts = [];
         if ($this->namespace !== '') {
