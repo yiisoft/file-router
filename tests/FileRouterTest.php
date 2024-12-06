@@ -17,6 +17,7 @@ use Yiisoft\FileRouter\Tests\Support\App2;
 use Yiisoft\FileRouter\Tests\Support\App3;
 use Yiisoft\FileRouter\Tests\Support\App4;
 use Yiisoft\FileRouter\Tests\Support\App5;
+use Yiisoft\FileRouter\Tests\Support\App6;
 use Yiisoft\FileRouter\Tests\Support\HeaderMiddleware;
 use Yiisoft\Middleware\Dispatcher\MiddlewareDispatcher;
 use Yiisoft\Middleware\Dispatcher\MiddlewareFactory;
@@ -102,6 +103,26 @@ final class FileRouterTest extends TestCase
             'DELETE',
             '/user',
             'Hello, delete!',
+        ];
+        yield 'HEAD /user' => [
+            'HEAD',
+            '/user',
+            'Hello, head!',
+        ];
+        yield 'OPTIONS /user' => [
+            'OPTIONS',
+            '/user',
+            'Hello, options!',
+        ];
+        yield 'GET /user/profile/view' => [
+            'GET',
+            '/user/profile/view',
+            'Hello, User\Profile\IndexController!',
+        ];
+        yield 'GET /user/blog/view' => [
+            'GET',
+            '/user/blog/view',
+            'Hello, blog view!',
         ];
     }
 
@@ -272,17 +293,39 @@ final class FileRouterTest extends TestCase
 
     public static function dataRoutesCollision(): iterable
     {
-        yield 'direct' => [
+        yield 'direct get' => [
             'GET',
             '/user',
-            'Hello, Controller/UserController!',
+            'Hello, index Controller/UserController!',
+        ];
+        yield 'direct delete' => [
+            'DELETE',
+            '/user',
+            'Hello, delete Controller/UserController!',
         ];
 
-        yield 'indirect' => [
+        yield 'indirect post' => [
             'POST',
             '/user',
-            'Hello, Controller/User/IndexController!',
+            'Hello, create Controller/User/IndexController!',
         ];
+    }
+
+    public function testActions(): void
+    {
+        $router = $this->createRouter();
+        $router = $router->withNamespace('Yiisoft\FileRouter\Tests\Support\App6');
+
+        $handler = $this->createExceptionHandler();
+        $request = new ServerRequest(
+            method: 'POST',
+            uri: '/user',
+        );
+
+        $response = $router->process($request, $handler);
+
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals('Hello, create Controller/User/IndexController!', (string) $response->getBody());
     }
 
     #[DataProvider('dataUnicodeRoutes')]
@@ -370,6 +413,13 @@ final class FileRouterTest extends TestCase
             '/m/o/d/u/l/e/index',
             'Hello, module2!',
         ];
+        yield 'модуль3 /index' => [
+            'Yiisoft\\FileRouter\\Tests\\Support\\App5\\Модуль3',
+            '/Модуль3',
+            'GET',
+            '/Модуль3/index',
+            'Hello, модуль3!',
+        ];
     }
 
     public function testModularityFastPath(): void
@@ -407,6 +457,7 @@ final class FileRouterTest extends TestCase
         $container = new SimpleContainer([
             HeaderMiddleware::class => new HeaderMiddleware(),
 
+            App1\Controller\User\Profile\ViewController::class => new  App1\Controller\User\Profile\ViewController(),
             App1\Controller\User\BlogController::class => new App1\Controller\User\BlogController(),
             App1\Controller\UserController::class => new App1\Controller\UserController(),
             App1\Controller\IndexController::class => new App1\Controller\IndexController(),
@@ -421,6 +472,10 @@ final class FileRouterTest extends TestCase
 
             App5\Module1\Controller\IndexController::class => new App5\Module1\Controller\IndexController(),
             App5\Module2\Controller\IndexController::class => new App5\Module2\Controller\IndexController(),
+            App5\Модуль3\Controller\Index\IndexController::class => new App5\Модуль3\Controller\Index\IndexController(),
+
+            App6\Controller\UserController::class => new App6\Controller\UserController(),
+            App6\Controller\User\IndexController::class => new App6\Controller\User\IndexController(),
         ]);
 
         return new FileRouter(

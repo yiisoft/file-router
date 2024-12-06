@@ -20,4 +20,9 @@ class BlogController
     {
         return new TextResponse('Hello, index!');
     }
+
+    public function view(): ResponseInterface
+    {
+        return new TextResponse('Hello, blog view!');
+    }
 }

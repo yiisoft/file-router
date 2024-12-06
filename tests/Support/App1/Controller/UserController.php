@@ -21,6 +21,16 @@ class UserController
         return new TextResponse('Hello, index!');
     }
 
+    public function head(): ResponseInterface
+    {
+        return new TextResponse('Hello, head!');
+    }
+
+    public function options(): ResponseInterface
+    {
+        return new TextResponse('Hello, options!');
+    }
+
     public function create(): ResponseInterface
     {
         return new TextResponse('Hello, create!');

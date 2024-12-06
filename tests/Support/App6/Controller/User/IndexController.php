@@ -2,18 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\FileRouter\Tests\Support\App3\Controller\User;
+namespace Yiisoft\FileRouter\Tests\Support\App6\Controller\User;
 
 use HttpSoft\Response\TextResponse;
 use Psr\Http\Message\ResponseInterface;
 
 class IndexController
 {
-    public function index(): ResponseInterface
-    {
-        return new TextResponse('Hello, index Controller/User/IndexController!');
-    }
-
     public function create(): ResponseInterface
     {
         return new TextResponse('Hello, create Controller/User/IndexController!');
