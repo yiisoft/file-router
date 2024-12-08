@@ -41,15 +41,37 @@ composer require yiisoft/file-router
             // or
             [
                 'class' => FileRouter::class,
-                'withNamespace()' => ['MyApp\\Package1'],
-                'withDefaultControllerName()' => ['Default'],
+                'withNamespace()' => ['App'],
+                'withBaseControllerDirectory()' => 'Controller',
             ],
             // ...
         ]
     ];
     ```
 
-2. Configure the router for your needs.
+2. [Configure the router](docs/guide/en#configuration) for your needs.
+
+By default, the following structure of the app could be used assuming `MyApp\Package1` points to `src` directory:
+
+```
+src
+  Controller
+    User
+      Profile
+        ViewController.php
+      BlogController.php
+    UserController.php
+    IndexController.php
+```
+
+Here's how it works:
+
+- `GET /` → `IndexController::index()`
+- `GET /user` → `UserController::index()`
+- `POST /user` → `UserController::create()`
+- `GET /user/blog/view` → `BlogController::view()`
+- `GET /user/profile` → `ViewController::index()`
+
 
 ## Documentation
 
