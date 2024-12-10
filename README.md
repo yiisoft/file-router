@@ -58,7 +58,7 @@ src
   Controller
     User
       Profile
-        ViewController.php
+        IndexController.php
       BlogController.php
     UserController.php
     IndexController.php
@@ -69,8 +69,8 @@ Here's how it works:
 - `GET /` → `IndexController::index()`
 - `GET /user` → `UserController::index()`
 - `POST /user` → `UserController::create()`
-- `GET /user/blog/view` → `BlogController::view()`
-- `GET /user/profile` → `ViewController::index()`
+- `GET /user/blog/view` → `User/BlogController::view()`
+- `GET /user/profile` → `User/Profile/IndexController::index()`
 
 
 ## Documentation
