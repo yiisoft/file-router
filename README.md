@@ -42,7 +42,7 @@ composer require yiisoft/file-router
             [
                 'class' => FileRouter::class,
                 'withNamespace()' => ['App'],
-                'withBaseControllerDirectory()' => 'Controller',
+                'withBaseControllerDirectory()' => ['Controller'],
             ],
             // ...
         ]
