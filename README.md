@@ -51,7 +51,7 @@ composer require yiisoft/file-router
 
 2. [Configure the router](docs/guide/en#configuration) for your needs.
 
-By default, the following structure of the app could be used assuming `MyApp\Package1` points to `src` directory:
+By default, the following structure of the app could be used assuming `App` points to `src` directory:
 
 ```
 src
