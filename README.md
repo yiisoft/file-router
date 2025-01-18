@@ -35,7 +35,7 @@ composer require yiisoft/file-router
 
     ```php
     return [
-        'middlewares' => [            
+        'middlewares' => [
             // ...
             Router::class,
             \Yiisoft\FileRouter\FileRouter::class,
@@ -52,8 +52,8 @@ composer require yiisoft/file-router
 
 2. [Configure the file router](docs/guide/en#configuration) for your needs.
 
-Note that `FileRouter` goes after regular `Router` so it serves as a fallback in case explicitly defined route
-is not found.
+> Note: `FileRouter` goes after regular `Router` to serve as a fallback in case explicitly defined route
+  is not found.
 
 By default, the following structure of the app could be used assuming `App` points to `src` directory:
 
