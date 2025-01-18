@@ -1,7 +1,7 @@
 {
     "name": "yiisoft/file-router",
     "type": "library",
-    "description": "File based router",
+    "description": "Convention-based file structure router",
     "keywords": [
         "file-router",
         "router",
