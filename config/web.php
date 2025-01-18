@@ -9,7 +9,7 @@ use Yiisoft\Middleware\Dispatcher\MiddlewareDispatcher;
 use Yiisoft\Middleware\Dispatcher\MiddlewareFactory;
 
 return [
-    FileRouter::class => function (ContainerInterface $container) {
+    FileRouter::class => static function (ContainerInterface $container) {
         $eventDispatcher = $container->has(EventDispatcherInterface::class)
             ? $container->get(EventDispatcherInterface::class)
             : null;
