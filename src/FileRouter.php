@@ -24,8 +24,7 @@ final class FileRouter implements MiddlewareInterface
 
     public function __construct(
         private readonly MiddlewareDispatcher $middlewareDispatcher,
-    ) {
-    }
+    ) {}
 
     /**
      * Sets the directory where controllers are located.
