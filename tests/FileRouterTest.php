@@ -441,6 +441,20 @@ final class FileRouterTest extends TestCase
         $router->process($request, $handler);
     }
 
+    public function testPathWithInvalidUtf8(): void
+    {
+        $router = $this->createRouter()->withNamespace('Yiisoft\FileRouter\Tests\Support\App1');
+        $handler = $this->createExceptionHandler();
+        $request = new ServerRequest(
+            method: 'GET',
+            uri: '/user/%FF%FE',
+        );
+
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage('Not implemented from tests.');
+        $router->process($request, $handler);
+    }
+
     public function testImmutability(): void
     {
         $router = $this->createRouter();
