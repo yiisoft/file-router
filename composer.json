@@ -32,6 +32,8 @@
     "require": {
         "php": "^8.1",
         "ext-mbstring": "*",
+        "psr/container": "^1.0|^2.0",
+        "psr/event-dispatcher": "^1.0",
         "psr/http-message": "^1.0|^2.0",
         "psr/http-server-handler": "^1.0",
         "psr/http-server-middleware": "^1.0",
@@ -45,6 +47,7 @@
         "phpunit/phpunit": "^10.5",
         "rector/rector": "^2.0.3",
         "roave/infection-static-analysis-plugin": "^1.34",
+        "shipmonk/composer-dependency-analyser": "^1.8",
         "spatie/phpunit-watcher": "^1.23",
         "vimeo/psalm": "^5.26.1 || ^6.16.1",
         "yiisoft/test-support": "^3.0"
@@ -75,6 +78,7 @@
         }
     },
     "scripts": {
+        "dependency-analyser": "composer-dependency-analyser",
         "psalm": "psalm",
         "test": "phpunit --testdox --no-interaction",
         "test-watch": "phpunit-watcher watch"
